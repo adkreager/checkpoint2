@@ -1,0 +1,5 @@
+charmander
+ditto
+pikachu
+bulbasaur
+squirtle
