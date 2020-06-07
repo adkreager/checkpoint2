@@ -38,7 +38,7 @@ function pokeList(input) {
                   // maps the array again, creating the output string for each array element
                   // POKEMON: TYPES(connected by commas)
                   .then(pokeData => {
-                      return pokemon + ': ' + pokeData.types.map(t => t.type.name).join(", ")
+                      return pokemon + ': ' + pokeData.types.map(pokeType => pokeType.type.name).join(", ")
                   })
                   // if the above function doesn't work, the type will be displayed as an error message
                   .catch(error => {
