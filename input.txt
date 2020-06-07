@@ -1,5 +1,12 @@
-charmander
 ditto
 pikachu
 bulbasaur
+ivysaur
+venusaur
+charmander
+charmeleon
+charizard
 squirtle
+wartortle
+blastoise
+missingno
