@@ -12,21 +12,49 @@ let fs = require("fs");
 //Charizard: flying, fire
 //Pikachu: electric
 
-function logPokemonAndTypes(input) {
- // get list of pokemon names from input text file
-  let pokemonList = [];
-  let data = fs.readFileSync(input)
-  let nameArray = data.toString().split('\n');
+function pokeList(input) {
+  // get data from the input file
+  fs.readFile(input, (err, data) => {
+      // if no data is found, error message
+      if (err) {
+          console.err('ERROR');
+          return;
+      }
+      // else, create a promise
+      // converts the input data into a string, and splits that string into an array
+      Promise.all(data.toString().split("\n")
+          // maps the data from the array to create an array of objects pulled from the API
+          .map(pokemon => {
+              return fetch('https://pokeapi.co/api/v2/pokemon/' + pokemon)
+                  .then(res => {
+                      // if the pokemon is found, converts the pokemon to json
+                      if (res.ok) {
+                          return res.json()
+                      // if not found, the data for that pokemon is this error string
+                      } else {
+                          throw new Error('No data found for ' + pokemon)
+                      }
+                  })
+                  // maps the array again, creating the output string for each array element
+                  // POKEMON: TYPES(connected by commas)
+                  .then(pokeData => {
+                      return pokemon + ': ' + pokeData.types.map(t => t.type.name).join(", ")
+                  })
+                  // if the above function doesn't work, the type will be displayed as an error message
+                  .catch(error => {
+                      return pokemon + ': ' + error.message;
+                  })
+          }))
 
- // cycling through the name array, fetch the data for the respective names and push to list of pokemon
-  for(let i = 0; i < nameArray.length; i++) {
-    fetch('https://pokeapi.co/api/v2/pokemon/' + nameArray[i])
-    .then(response => response.json())
-    .then(json => pokemonList.push(json))
-  };
- // log data to console
- console.log(nameArray);
- console.log(pokemonList);
+          .then(results => {
+              results.forEach((item) => {
+                  console.log(item);
+              })
+          })
+          .catch(error => {
+              console.log(error)
+          })
+  })
 }
 
-logPokemonAndTypes('input.txt');
+pokeList('input.txt');
